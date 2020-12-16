@@ -3,28 +3,32 @@ import { GraphQLServer } from 'graphql-yoga'
 //Type definitions (schema)
 const typeDefs = `
     type Query {
-        hello: String!
-        name: String!
-        location: String!
-        bio: String!
+        title: String!
+        price: Float!
+        releaseYear: Int
+        rating: Float
+        inStock: Boolean
     }
 `
 
 //Resolvers
 const resolvers = {
     Query: {
-        hello() {
-            return 'This is my first query!'
+        title() {
+            return 'AOC G2490VX 23.8 inch Full HD 144hz 1ms Adaptive Sync Gaming Monitor'
         },
-        name() {
-            return 'Azhari Muhammad M'
+        price() {
+            return 199.99
         },
-        location() {
-            return 'Cianjur'
+        releaseYear() {
+            return 2020
         },
-        bio() {
-            return 'An introverted bastard!'
-        }
+        rating() {
+            return null
+        },
+        inStock() {
+            return true
+        },
     }
 }
 
