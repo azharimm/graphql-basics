@@ -8,9 +8,9 @@ const users = [
 ]
 
 const posts = [
-    {id: '1', title: 'The first post', body: 'Hello this is the first post', published: true},
-    {id: '2', title: 'The second post', body: 'Hello this is the second post', published: false},
-    {id: '3', title: 'The third post', body: 'Hello this is the third post', published: true},
+    {id: '1', title: 'The first post', body: 'Hello this is the first post', published: true, author: '1'},
+    {id: '2', title: 'The second post', body: 'Hello this is the second post', published: false, author: '1'},
+    {id: '3', title: 'The third post', body: 'Hello this is the third post', published: true, author: '3'},
 ]
 
 //Type definitions (schema)
@@ -34,6 +34,7 @@ const typeDefs = `
         title: String!
         body: String!
         published: Boolean
+        author: User!
     }
 `
 
@@ -56,7 +57,9 @@ const resolvers = {
             }
 
             return posts.filter((post) => {
-                return post.title.toLowerCase().includes(args.query.toLowerCase()) || post.body.toLowerCase().includes(args.query.toLowerCase())
+                const isTitleMatch = post.title.toLowerCase().includes(args.query.toLowerCase())
+                const isBodyMatch = post.body.toLowerCase().includes(args.query.toLowerCase())
+                return  isTitleMatch || isBodyMatch 
             })
         },
         me() {
@@ -74,6 +77,11 @@ const resolvers = {
                 body: 'Hello there! i am learning graphql now',
                 published: true
             }
+        }
+    },
+    Post: {
+        author(parent, args, ctx, info) {
+            return users.find((user) => parent.author === user.id)
         }
     }
 }
