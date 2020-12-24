@@ -1,11 +1,23 @@
 import { GraphQLServer } from 'graphql-yoga'
 
+//Demo users data
+const users = [
+    {id: '1', name: 'Azhari', email: 'azhar@example.com', age: 25},
+    {id: '2', name: 'Saniscara', email: 'saniscara@example.com', age: 19},
+    {id: '3', name: 'Sarah', email: 'sarah@example.com'},
+]
+
+const posts = [
+    {id: '1', title: 'The first post', body: 'Hello this is the first post', published: true},
+    {id: '2', title: 'The second post', body: 'Hello this is the second post', published: false},
+    {id: '3', title: 'The third post', body: 'Hello this is the third post', published: true},
+]
+
 //Type definitions (schema)
 const typeDefs = `
     type Query {
-        greeting(name: String, position: String): String!
-        add(numbers: [Float!]!): Float!
-        grades: [Int!]!
+        users(query: String): [User!]!
+        posts(query: String): [Post!]
         me: User
         post: Post
     }
@@ -28,23 +40,24 @@ const typeDefs = `
 //Resolvers
 const resolvers = {
     Query: {
-        greeting(parent, args, ctx, info) {
-            if(args.name && args.position) {
-                return `Hello ${args.name}! I am a ${args.position}`
+        users(parent, args, ctx, info) {
+            if(!args.query) {
+                return users;
             }
-            return 'Hello'
-        },
-        add(parent, args, ctx, info) {
-            if(args.numbers.length === 0) {
-                return 0
-            }
-            //[1, 5, 7]
-            return args.numbers.reduce((accumulator, currentValue) => {
-                return accumulator + currentValue
+            
+            return users.filter((user) => {
+                return user.name.toLowerCase().includes(args.query.toLowerCase())
             })
+            
         },
-        grades(parent, args, ctx, info) {
-            return [99, 23, 74]
+        posts(parent, args, ctx, info) {
+            if(!args.query) {
+                return posts
+            }
+
+            return posts.filter((post) => {
+                return post.title.toLowerCase().includes(args.query.toLowerCase()) || post.body.toLowerCase().includes(args.query.toLowerCase())
+            })
         },
         me() {
             return {
