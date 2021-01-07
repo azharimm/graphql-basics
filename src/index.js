@@ -14,10 +14,10 @@ const posts = [
 ]
 
 const comments = [
-    {id: '1', text: 'Hello thanks for sharing!', author: '2'},
-    {id: '2', text: 'It is working for me', author: '3'},
-    {id: '3', text: 'Nice content', author: '3'},
-    {id: '4', text: 'GG', author: '2'},
+    {id: '1', text: 'Hello thanks for sharing!', author: '2', post: '1'},
+    {id: '2', text: 'It is working for me', author: '3', post: '1'},
+    {id: '3', text: 'Nice content', author: '3', post: '2'},
+    {id: '4', text: 'GG', author: '2', post: '2'},
 ]
 
 //Type definitions (schema)
@@ -45,12 +45,14 @@ const typeDefs = `
         body: String!
         published: Boolean
         author: User!
+        comments: [Comment!]!
     }
 
     type Comment {
         id: ID!
         text: String!
         author: User!
+        post: Post!
     }
 `
 
@@ -101,7 +103,10 @@ const resolvers = {
     //relationship resolver 
     Post: {
         author(parent, args, ctx, info) {
-            return users.find((user) => parent.author === user.id)
+            return users.find((user) => user.id === parent.author)
+        },
+        comments(parent, args, ctx, info) {
+            return comments.filter(comment => comment.post === parent.id)
         }
     },
     User: {
@@ -109,13 +114,16 @@ const resolvers = {
             return posts.filter(post => post.author === parent.id)
         },
         comments(parent, args, ctx, info) {
-            return comments.filter(comment => comment.author == parent.id)
+            return comments.filter(comment => comment.author === parent.id)
         }
     },
     Comment: {
         author(parent, args, ctx, info) {
-            return users.find((user) => parent.author == user.id)
-        }
+            return users.find((user) => user.id === parent.author)
+        },
+        post(parent, args, ctx, info) {
+            return posts.find(post => post.id === parent.post)
+        },
     }
 }
 
