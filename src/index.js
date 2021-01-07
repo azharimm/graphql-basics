@@ -14,10 +14,10 @@ const posts = [
 ]
 
 const comments = [
-    {id: '1', text: 'Hello thanks for sharing!'},
-    {id: '2', text: 'It is working for me'},
-    {id: '3', text: 'Nice content'},
-    {id: '4', text: 'GG'},
+    {id: '1', text: 'Hello thanks for sharing!', author: '2'},
+    {id: '2', text: 'It is working for me', author: '3'},
+    {id: '3', text: 'Nice content', author: '3'},
+    {id: '4', text: 'GG', author: '2'},
 ]
 
 //Type definitions (schema)
@@ -36,6 +36,7 @@ const typeDefs = `
         email: String!
         age: Int
         posts: [Post!]!
+        comments: [Comment!]!
     }
 
     type Post {
@@ -49,6 +50,7 @@ const typeDefs = `
     type Comment {
         id: ID!
         text: String!
+        author: User!
     }
 `
 
@@ -76,7 +78,7 @@ const resolvers = {
                 return  isTitleMatch || isBodyMatch 
             })
         },
-        comments() {
+        comments(parent, args, ctx, info) {
             return comments;
         },
         me() {
@@ -96,6 +98,7 @@ const resolvers = {
             }
         }
     },
+    //relationship resolver 
     Post: {
         author(parent, args, ctx, info) {
             return users.find((user) => parent.author === user.id)
@@ -104,6 +107,14 @@ const resolvers = {
     User: {
         posts(parent, args, ctx, info) {
             return posts.filter(post => post.author === parent.id)
+        },
+        comments(parent, args, ctx, info) {
+            return comments.filter(comment => comment.author == parent.id)
+        }
+    },
+    Comment: {
+        author(parent, args, ctx, info) {
+            return users.find((user) => parent.author == user.id)
         }
     }
 }
