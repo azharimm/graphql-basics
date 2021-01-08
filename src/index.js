@@ -1,4 +1,5 @@
 import { GraphQLServer } from 'graphql-yoga'
+import { v4 as uuidv4 } from 'uuid';
 
 //Demo users data
 const users = [
@@ -28,6 +29,10 @@ const typeDefs = `
         comments: [Comment!]!
         me: User
         post: Post,
+    }
+
+    type Mutation {
+        createUser(name: String!, email: String!, age: Int): User!
     }
 
     type User {
@@ -100,6 +105,25 @@ const resolvers = {
             }
         }
     },
+    Mutation: {
+        createUser(parent, args, ctx, info) {
+            const emailTaken = users.some((user) => user.email === args.email)
+            if(emailTaken) {
+                throw new Error('Email taken.')
+            }
+
+            const user = {
+                id: uuidv4(),
+                name: args.name,
+                email: args.email,
+                age: args.age
+            }
+
+            users.push(user);
+
+            return user;
+        }
+    },
     //relationship resolver 
     Post: {
         author(parent, args, ctx, info) {
@@ -133,5 +157,5 @@ const server = new GraphQLServer({
 });
 
 server.start(() => {
-    console.log(`The server is up!`);
+    console.log(`The server is up on port 4000`);
 });
