@@ -1,7 +1,6 @@
 import { GraphQLServer } from 'graphql-yoga'
 import { v4 as uuidv4 } from 'uuid';
 
-//Demo users data
 let users = [
     {id: '1', name: 'Azhari', email: 'azhar@example.com', age: 25},
     {id: '2', name: 'Saniscara', email: 'saniscara@example.com', age: 19},
@@ -20,70 +19,6 @@ let comments = [
     {id: '3', text: 'Nice content', author: '3', post: '2'},
     {id: '4', text: 'GG', author: '2', post: '2'},
 ]
-
-//Type definitions (schema)
-const typeDefs = `
-    type Query {
-        users(query: String): [User!]!
-        posts(query: String): [Post!]
-        comments: [Comment!]!
-        me: User
-        post: Post,
-    }
-
-    type Mutation {
-        createUser(data: CreateUserInput!): User!
-        deleteUser(id: ID!): User!
-        createPost(data: CreatePostInput!): Post!
-        deletePost(id: ID!): Post!
-        createComment(data: CreateCommentInput!): Comment!
-        deleteComment(id: ID!): Comment!
-    }
-
-    input CreateUserInput {
-        name: String!
-        email: String!
-        age: Int
-    }
-
-    input CreatePostInput {
-        title: String!
-        body: String!
-        published: Boolean!
-        author: ID!
-    }
-
-    input CreateCommentInput {
-        text: String!
-        author: ID!
-        post: ID!
-    }
-
-    type User {
-        id: ID!
-        name: String!
-        email: String!
-        age: Int
-        posts: [Post!]!
-        comments: [Comment!]!
-    }
-
-    type Post {
-        id: ID!
-        title: String!
-        body: String!
-        published: Boolean
-        author: User!
-        comments: [Comment!]!
-    }
-
-    type Comment {
-        id: ID!
-        text: String!
-        author: User!
-        post: Post!
-    }
-`
 
 //Resolvers
 const resolvers = {
@@ -249,7 +184,7 @@ const resolvers = {
 }
 
 const server = new GraphQLServer({
-    typeDefs,
+    typeDefs: './src/schema.graphql',
     resolvers
 });
 
